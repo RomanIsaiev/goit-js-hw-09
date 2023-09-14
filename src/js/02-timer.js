@@ -1,4 +1,6 @@
 import flatpickr from 'flatpickr';
+import Notiflix from 'notiflix';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const refs = {
@@ -21,40 +23,43 @@ flatpickr(refs.inputDate, {
     refs.startBtn.addEventListener('click', startTimer);
 
     const userDateSelected = selectedDates[0].getTime();
-    const currentDate = Date.now();
-    let intervaId = null;
+    const currentDate = new Date();
 
     if (selectedDates[0] < currentDate) {
       refs.startBtn.setAttribute('disabled', '');
-      window.alert('Please choose a date in the future');
+      Notiflix.Notify.failure('Please choose a date in the future');
       return;
     } else {
       refs.startBtn.removeAttribute('disabled', '');
     }
 
     function startTimer() {
-      intervaId = setInterval(() => {
-        refs.startBtn.setAttribute('disabled', '');
-        const { days, hours, minutes, seconds } = convertMs(
+      refs.startBtn.setAttribute('disabled', '');
+      const intervaId = setInterval(() => {
+        const { days, hours, minutes, seconds, total } = convertMs(
           userDateSelected - Date.now()
         );
-        refs.days.textContent = pad(days);
-        refs.hours.textContent = pad(hours);
-        refs.minutes.textContent = pad(minutes);
-        refs.seconds.textContent = pad(seconds);
-        if (userDateSelected === currentDate) {
+
+        refs.days.textContent = addLeadingZero(days);
+        refs.hours.textContent = addLeadingZero(hours);
+        refs.minutes.textContent = addLeadingZero(minutes);
+        refs.seconds.textContent = addLeadingZero(seconds);
+
+        if (total <= 0) {
+          refs.seconds.textContent = '00';
           clearInterval(intervaId);
         }
       }, 1000);
     }
 
-    function pad(value) {
+    function addLeadingZero(value) {
       return String(value).padStart(2, '0');
     }
   },
 });
 
 function convertMs(ms) {
+  const total = Date.parse(ms) - Date.parse(new Date());
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
@@ -65,5 +70,5 @@ function convertMs(ms) {
   const minutes = Math.floor(((ms % day) % hour) / minute);
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
-  return { days, hours, minutes, seconds };
+  return { days, hours, minutes, seconds, total };
 }
