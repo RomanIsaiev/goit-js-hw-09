@@ -11,14 +11,14 @@ let timerId = null;
 
 refs.stopBtn.setAttribute('disabled', '');
 
-function start(event) {
-  event.target = refs.startBtn.setAttribute('disabled', '');
+function start() {
+  refs.startBtn.setAttribute('disabled', '');
   timerId = setInterval(setRandomBackgroundColor, 1000);
   refs.stopBtn.removeAttribute('disabled', '');
 }
 
-function stop(event) {
-  event.target = refs.stopBtn.setAttribute('disabled', '');
+function stop() {
+  refs.stopBtn.setAttribute('disabled', '');
   clearInterval(timerId);
   refs.startBtn.removeAttribute('disabled', '');
 }
