@@ -35,8 +35,9 @@ flatpickr(refs.inputDate, {
 
     function startTimer() {
       refs.startBtn.setAttribute('disabled', '');
+      refs.inputDate.setAttribute('disabled', '');
       const intervaId = setInterval(() => {
-        const { days, hours, minutes, seconds } = convertMs(
+        const { days, hours, minutes, seconds, total } = convertMs(
           userDateSelected - Date.now()
         );
 
@@ -45,8 +46,19 @@ flatpickr(refs.inputDate, {
         refs.minutes.textContent = addLeadingZero(minutes);
         refs.seconds.textContent = addLeadingZero(seconds);
 
-        if (selectedDates[0].toTimeString() === new Date().toTimeString()) {
+        //? у меня данное условие останавливало таймер
+        // if (selectedDates[0].toTimeString() === new Date().toTimeString()) {
+        //   clearInterval(intervaId);
+        // refs.inputDate.removeAttribute('disabled', '');
+        // refs.days.textContent = '00';
+        // refs.hours.textContent = '00';
+        // refs.minutes.textContent = '00';
+        // refs.seconds.textContent = '00';
+        // }
+
+        if (total <= 0) {
           clearInterval(intervaId);
+          refs.inputDate.removeAttribute('disabled', '');
           refs.days.textContent = '00';
           refs.hours.textContent = '00';
           refs.minutes.textContent = '00';
@@ -62,6 +74,7 @@ flatpickr(refs.inputDate, {
 });
 
 function convertMs(ms) {
+  const total = Date.parse(ms) - Date.parse(new Date());
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
@@ -72,5 +85,5 @@ function convertMs(ms) {
   const minutes = Math.floor(((ms % day) % hour) / minute);
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
-  return { days, hours, minutes, seconds };
+  return { days, hours, minutes, seconds, total };
 }

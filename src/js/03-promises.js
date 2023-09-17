@@ -1,4 +1,4 @@
-import Notiflix from 'notiflix';
+import Notiflix, { Loading } from 'notiflix';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const setOptionsForm = document.querySelector('.form');
